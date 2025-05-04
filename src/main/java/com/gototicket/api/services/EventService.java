@@ -3,6 +3,7 @@ package com.gototicket.api.services;
 import com.amazonaws.services.s3.AmazonS3;
 import com.gototicket.api.domain.event.Event;
 import com.gototicket.api.domain.event.EventRequestDTO;
+import com.gototicket.api.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class EventService {
     @Value("${aws.bucket.name}")
     private String bucketName;
 
+    @Autowired
+    private EventRepository eventRepository;
+
     public Event createEvent(EventRequestDTO data){
         String imgUrl=null;
 
@@ -39,6 +43,10 @@ public class EventService {
         newEvent.setEventUrl(data.eventUrl());
         newEvent.setDate(new Date(data.date()));
         newEvent.setImgUrl(imgUrl);
+        newEvent.setRemote(data.remote());
+
+        //Saving on DB
+        eventRepository.save(newEvent);
 
         return newEvent;
     }
