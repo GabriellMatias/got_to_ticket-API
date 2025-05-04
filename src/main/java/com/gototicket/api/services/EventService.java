@@ -49,11 +49,12 @@ public class EventService {
         try{
             File file = this.convertMultipartToFile(multipartFile);
             s3Object.putObject(bucketName, fileName, file);
+            file.delete();
+            return s3Object.getUrl(bucketName, fileName).toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        return "";
     }
 
     private File convertMultipartToFile(MultipartFile multipartFile) throws IOException {
